@@ -8,22 +8,34 @@
 */
 
 /* Icludes ESP Wifi header */ 
+#include <Arduino.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
-#include <NTPClient.h>
+//OTA libs 
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+
+// #include <NTPClient.h>
 #include <WiFiUdp.h>
+
 
 #include "LoRa.h"
 #include "bq78412.h"
+#include "credentials.h"
 
+AsyncWebServer server(80);
+
+/* Need header files/lib for LoRa to work as expected */
 #include <SPI.h> 
 #include <LoRa.h>
 
 void setup(){
-	Serial.begin(9600);
-	Serial.println("iWave Slave SLDC000001");
+	Serial.begin(9600); // Initializes the serial port
+	Serial.flush(); // Waits for outgoing serial data to complete transmission
+	Serial.println("iWave Slave 0x01"); // prints the slave id "debugging purposes"
 
-
+   // If there is need to use WiFi from individual boards uncomment this section
+	
     WiFi.begin(ssid, password);
 	  while (WiFi.status() != WL_CONNECTED) {
 	    delay(500);
@@ -33,6 +45,16 @@ void setup(){
   	Serial.print("Connected to WiFi network with IP Address: ");
   	Serial.println(WiFi.localIP());
 
+  	 server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", "Hi, this is the iWave Slave.");
+      AsyncElegantOTA.begin(&server);    // Start ElegantOTA
+	  server.begin();
+	  Serial.println("HTTP server started");
+  });
+
+
+
+    // Initialize the LoRa Module
     LoRa.setPins(ss, rst, dio0);
     Serial.println("LoRa Transmistter initialized");
     if (!LoRa.begin(915E6)) {
@@ -43,8 +65,10 @@ void setup(){
 }
 
 void loop(){
-    
-    current_send_time = millis();
+	/* OTA updates enabled */
+    AsyncElegantOTA.loop(); // executes when we have available OTA
+
+    current_send_time = millis(); // Takes a snapshot of the current time
 	// Fetch Data from the bq
 	battery_voltage = bqDataRead(1); // passed value "1" fetches voltage as read from the bq
 	battery_SoC = bqDataRead(2); // passed value "2" fetches SoC % as read from the bq
@@ -55,7 +79,7 @@ void loop(){
 	s.concat(battery_SoC);
 	t.concat(battery_temp);
 
-    String bq_lora_msg = v + ", " + s + "," + t;
+    String bq_lora_msg = v + ", " + s + "," + t;  // concatenates the final data string to be sent over LoRa to the master
     
     /* Ensures to only send data only at specific intervals */
     if((unsigned long)(current_send_time - last_send_time) >= interval + 100){
@@ -63,7 +87,7 @@ void loop(){
     /* Invoke method to send the data to the Master device */
     send_bq_data(bq_lora_msg);
 
-    Serial.println("Sending bq data: " message);   
+    Serial.println("Sending bq data:" + bq_lora_msg);   
     
     /* Takes a snapshot to set track of time until the next even */
     last_send_time = current_send_time; 
@@ -107,7 +131,7 @@ double bqDataRead(int param){
     while(timer < 10000){
     	/* Serial Data becomes available from bq to the Host */
     	if(Serial.available() == 1){
-    		incoming_message_byte = Serial.read();
+    		bq_message_byte = Serial.read();
     		incoming_message_char = bq_message_byte;
 
     		/* next line appends the incmoming read bytes to the byte array "bq_message" */
@@ -137,7 +161,7 @@ double bqDataRead(int param){
 /* Method to parse raw byte dats from the bq at the Host MCU */
 
 double parsebqArray(int lsb, int msb, byte bq_message[]){
-	// bq demands we use the lsb format 
+	// bq demands we use start with the lsb format 
 	int i = lsb;
 
 	// initialize counter to zero
@@ -145,7 +169,8 @@ double parsebqArray(int lsb, int msb, byte bq_message[]){
 
 	// results 
 	double bq_results = 0;
-
+    
+    // Loop completes for all bits (lsb-msb)
 	while(i <= msb ){
 		bq_results = bq_results + bq_message[i] * pow(256,byte_pos);
 		byte_pos ++;
@@ -157,40 +182,10 @@ double parsebqArray(int lsb, int msb, byte bq_message[]){
 
 void send_bq_data(String bq_data){
  LoRa.beginPacket();  // starts a packet to send
- LoRa.Write(slave_addrr);  // adds specific slave ID/address
+ LoRa.write(slave_addrr);  // adds specific slave ID/address
  LoRa.write(master_addrr); // adds master receiver ID/address
- LoRa.Write(lora_msg_count);// adds message counter
+ LoRa.write(lora_msg_count);// adds message counter
  LoRa.print(bq_data); // adds the data payload to be sent over
  LoRa.endPacket(); 
  lora_msg_count++; 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
