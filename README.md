@@ -19,6 +19,10 @@ Programming
 - On library installation unzip the folder :file_folder: `libs` copy and paste all the folders to your directory `documents/arduino/library` folder :file_folder:
 - Open the `.ino` file for i-wave-master with the downloaded and ide, compile and uplaod to the hardware `(procedure on how to use the ide is on the tutorial link)`:link:    [tutorial](https://www.youtube.com/watch?v=nL34zDTPkcs&t=3s)
 
+OTA
+---
+- AsyncElegantOTA provides a beautiful interface to upload Over the Air `.bin` updates to your ESP Modules with precise status and progress displayed over UI. This Library shows the current upload progress of your OTA and once finished, it will display the status of your OTA. This Code adapts the AsyncWebServer.
+- For more details on how it works visit the [repo](https://github.com/ayushsharma82/AsyncElegantOTA)
 
 Slave
 ---
