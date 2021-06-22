@@ -3,10 +3,20 @@ The repo contains firmware codes for both master and slave devices that monitor 
 Everything on how to program and what the codes does is documented sequentially in this repo.
 The data from the slaves to the master is transferred wirelessly via LoRa where it's then logged to some server.
 ## Battery Monitoring System 
+
 ## Master
+
 The master consists of an ESP32 as the main MCU and the WiFi gateway for server communications. It also got a LoRa module that receives the data wirelessly from the slave module(s) that monitors of the individual batteries.
 
 <img src="images/i-wave_master_4.png" height="350"></img> 
+Programming
+---
+- The IDE to be used for this development is [Arduino IDE](https://www.arduino.cc/en/software) Atmel Studio Can also be used as well. 
+- The PCB has Micro USB interface as the programming interface, if you don't have familiarity with the software you can pick up on this :link:[tutorial](https://www.youtube.com/watch?v=nL34zDTPkcs&t=3s)
+
+- Download all the files on the :arrow_down_small: `Code section` on the platform, In your downloads you will get the a folder :file_folder:  `i-wave-master` this will have all the codes and related libraries.
+- On library installation unzip the folder :file_folder: `libs` copy and paste all the folders to your directory `documents/arduino/library` folder 
+
 
 Slave
 ---
@@ -15,6 +25,13 @@ The slave also makes use of the ESP32 as the main controller unit, it makes use 
 
 <img src="images/i-wave_slave.png" height="350"></img> 
 ---
+
+Programming
+---
+- The IDE to be used for this development is [Arduino IDE](https://www.arduino.cc/en/software) Atmel Studio Can also be used as well. 
+- The PCB has Micro USB interface as the programming interface, if you don't have familiarity with the software you can pick up on this :link:[tutorial](https://www.youtube.com/watch?v=nL34zDTPkcs&t=3s)
+- 
+
 ### Communications Interface
 ---
 The `bq78412` provides a `UART` communications interface for parameter initialization during system config and test. This interface also provides real-time measurement capability and acess to stored battery performance data.
