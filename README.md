@@ -8,8 +8,11 @@ The master consists of an ESP32 as the main MCU and the WiFi gateway for server 
 
 <img src="images/i-wave_master_4.png" height="350"></img> 
 
-# Slave
+Slave
+---
+
 The slave also makes use of the ESP32 as the main controller unit, it makes use of a dedicated IC [bq78412](https://www.ti.com/lit/ds/symlink/bq78412.pdf?ts=1624178578744&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FBQ78412) to perform the battery states monitoring, once all important data has been extracted it will be sent to the master via LoRa
+
 <img src="images/i-wave_slave.png" height="350"></img> 
 ---
 ### Communications Interface
