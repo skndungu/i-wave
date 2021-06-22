@@ -15,6 +15,7 @@
 
 #include "LoRa.h"
 #include "bq78412.h"
+#include "credentials.h"
 
 #include <SPI.h> 
 #include <LoRa.h>

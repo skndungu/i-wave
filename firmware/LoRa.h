@@ -1,6 +1,6 @@
 int lora_msg_count = 0; // keeps track of all messages sent 
-char slave_addrr = "SLDC000001"; // address of the slave dev ---> update this value for different slave device
-char master_addrr = "Mas000001";// address of the Master dev ---> This does not change as it's one
+byte slave_addrr = 0x01; // address of the slave dev ---> update this value for different slave device
+byte master_addrr = 0x02;// address of the Master dev ---> This does not change as it's one
 
 long current_send_time = 0;
 long last_send_time = 0;
