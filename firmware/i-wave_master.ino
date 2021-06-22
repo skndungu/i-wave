@@ -29,7 +29,7 @@ String formattedDate;
 #define dio0 2
 
 byte msgCount = 0;            // count of incoming messages
-byte masterAddress = 0x02;    // address of this device
+byte masterAddress = 0x00;    // address of the Master
 unsigned long timeNow = 0;
 bool loraReceived = false;
 String slavePayload = ""; //payload from the slave
