@@ -7,6 +7,11 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
+//OTA libs 
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+
 const char* ssid  = "your wifi ssid";
 const char* password = "your wifi password";
 const char* dataUrl = "";//data url endpoint
@@ -19,6 +24,8 @@ const int daylightOffsetSec = 10800;
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
+
+AsyncWebServer server(80);
 
 // Variables to save date and time
 String formattedDate;
@@ -43,6 +50,14 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
+  
+   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", "Hi, this is the iWave Slave.");
+      AsyncElegantOTA.begin(&server);    // Start ElegantOTA
+	  server.begin();
+	  Serial.println("HTTP server started");
+  });
+  
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
@@ -59,6 +74,9 @@ void setup() {
 }
 
 void loop() {
+  	/* OTA updates enabled */
+  AsyncElegantOTA.loop(); // executes when we have available OTA
+  
   String timeStamp = getTimestamp(); //get timestamp
   //wait to receive loRa packet form the slaveBoard
   onReceive(LoRa.parsePacket());
