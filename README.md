@@ -4,7 +4,7 @@ Everything on how to program and what the codes does is documented sequentially 
 The data from the slaves to the master is transferred wirelessly via LoRa where it's then logged to some server.
 ## Battery Monitoring System 
 ## Master
-The master consists of an ESP32 as the main MCU and the WiFi gateway for server communications. It also got a LoRa module that receives the data wirelessly from the slave modules the do the monitoring of the individual batteries.
+The master consists of an ESP32 as the main MCU and the WiFi gateway for server communications. It also got a LoRa module that receives the data wirelessly from the slave module(s) that monitors of the individual batteries.
 
 <img src="images/i-wave_master_4.png" height="350"></img> 
 
